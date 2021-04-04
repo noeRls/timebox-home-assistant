@@ -36,6 +36,8 @@ function sleep(ms: number) {
     });
 }
 
+router.post('/connect', isLogged, withTimebox(), (req, res) => res.status(OK).end());
+
 router.post('/text', isLogged, validateMiddleware(TextBody), withTimebox(), async (req, res) => {
     const { text } = req.body as TextBody;
     let replied = false;

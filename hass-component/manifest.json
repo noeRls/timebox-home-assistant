@@ -1,0 +1,8 @@
+{
+    "domain": "timebox",
+    "name": "timebox",
+    "dependencies": [],
+    "codeowners": [],
+    "requirements": [],
+    "config_flow": true
+}
