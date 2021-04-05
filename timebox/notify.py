@@ -113,7 +113,7 @@ class Timebox():
         self.mac = mac
 
     def send_request(self, error_message, url, data, files = {}):
-        r = requests.post(f'{self.url}{url}', data=data, files=files)
+        r = requests.post(f'{self.url}{url}', data=data, files=files, timeout=TIMEOUT)
         if (r.status_code != 200):
             _LOGGER.error(r.content)
             _LOGGER.error(error_message)

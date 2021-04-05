@@ -2,10 +2,10 @@
   "name": "timebox-api",
   "version": "1.0.0",
   "description": "",
-  "main": "build/src/index.js",
+  "main": "build/index.js",
   "scripts": {
     "test": "exit 1",
-    "start": "node build/src/index.js",
+    "start": "node build/index.js",
     "build": "tsc",
     "dev": "ts-node-dev --respawn --no-notify ./src/index.ts",
     "build:watch": "tsc --watch",

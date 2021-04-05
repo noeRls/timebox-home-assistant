@@ -2,7 +2,7 @@
     "domain": "timebox",
     "name": "timebox",
     "dependencies": [],
-    "codeowners": [],
+    "codeowners": ["@noerls"],
     "requirements": [],
     "version": "1"
 }
