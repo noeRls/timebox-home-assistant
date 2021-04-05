@@ -10,7 +10,7 @@ const upload = multer({ dest: './images' });
 const router = Router();
 
 router.post('/image', isLogged, upload.single('image'), withTimebox(), async (req: Request, res: Response) => {
-    if (!req.file || !['png', 'gif', 'jpg'].some(m => req.file.mimetype.includes(m))) {
+    if (!req.file/* || !['png', 'gif', 'jpg'].some(m => req.file.mimetype.includes(m))*/) {
         return res.status(BAD_REQUEST).send({ error: 'Invalid file' });
     }
     try {
@@ -25,6 +25,8 @@ router.post('/image', isLogged, upload.single('image'), withTimebox(), async (re
     }
 });
 
+router.post('/connect', isLogged, withTimebox(), (req, res) => res.status(OK).end());
+
 class TextBody {
     @IsString()
     text: string
@@ -35,8 +37,6 @@ function sleep(ms: number) {
         setTimeout(resolve, ms);
     });
 }
-
-router.post('/connect', isLogged, withTimebox(), (req, res) => res.status(OK).end());
 
 router.post('/text', isLogged, validateMiddleware(TextBody), withTimebox(), async (req, res) => {
     const { text } = req.body as TextBody;
