@@ -45,6 +45,6 @@ jobs:
           context: server/
           push: true
           tags: noerls/timebox-home-assistant:latest
-          platforms: linux/amd64,linux/arm64,linux/arm/v5,linux/arm/v7,linux/arm64/v8
+          platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
