@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { isLogged, validateMiddleware, withTimebox } from '../middleware';
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, OK } from 'http-status';
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import * as multer from 'multer';
-import { DisplayAnimation, DisplayText, TimeboxEvo } from 'node-divoom-timebox-evo';
+import { BrightnessCommand, DisplayAnimation, DisplayText, TimeboxEvo, TimeChannel } from 'node-divoom-timebox-evo';
 
 const upload = multer({ dest: './images' });
 
@@ -57,6 +57,34 @@ router.post('/text', isLogged, validateMiddleware(TextBody), withTimebox(), asyn
         if (!replied) {
             res.status(INTERNAL_SERVER_ERROR).send(e);
         }
+    }
+});
+
+router.post('/time', isLogged, withTimebox(), async (req, res) => {
+    try {
+        const r = (new TimeboxEvo()).createRequest('time') as TimeChannel;
+        await req.timebox.sendMultiple(r.messages.asBinaryBuffer());
+        return res.status(OK).end();
+    } catch (e) {
+        console.error(e);
+        return res.status(INTERNAL_SERVER_ERROR).send(e);
+    }
+});
+
+
+router.post('/brightness', isLogged, withTimebox(), async (req, res) => {
+    const brightness = Number(req.body.brightness);
+    if (brightness < 0 || brightness > 100) {
+        return res.status(BAD_REQUEST).send('Invalid brigthness')
+    }
+    try {
+        const r = (new TimeboxEvo()).createRequest('brightness') as BrightnessCommand;
+        r.brightness = brightness;
+        await req.timebox.sendMultiple(r.messages.asBinaryBuffer());
+        return res.status(OK).end();
+    } catch (e) {
+        console.error(e);
+        return res.status(INTERNAL_SERVER_ERROR).send(e);
     }
 });
 

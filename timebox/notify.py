@@ -29,6 +29,11 @@ PARAM_LINK = "link"
 MODE_TEXT = "text"
 PARAM_TEXT = "text"
 
+MODE_BRIGHTNESS = "brightness"
+PARAM_BRIGHTNESS = "brightness"
+
+MODE_TIME = "time"
+
 def is_valid_server_url(url):
     r = requests.get(f'{url}/hello', timeout=TIMEOUT)
     if r.status_code != 200:
@@ -88,6 +93,15 @@ class TimeboxService(BaseNotificationService):
             else:
                 _LOGGER.error(f"Invalid payload, {PARAM_TEXT} must be provided with {MODE_TEXT}")
                 return False
+        elif (mode == MODE_BRIGHTNESS):
+            try:
+                brightness = int(data.get(PARAM_BRIGHTNESS))
+                return self.timebox.set_brightness(brightness)
+            except Exception:
+                _LOGGER.error(f"Invalid payload, {PARAM_BRIGHTNESS}={data.get(PARAM_BRIGHTNESS)}")
+                return False
+        elif (mode == MODE_TIME):
+            return self.timebox.set_time_channel()
         else:
             _LOGGER.error(f"Invalid mode {mode}")
             return False
@@ -97,27 +111,26 @@ class Timebox():
     def __init__(self, url, mac):
         self.url = url
         self.mac = mac
-    
-    def send_image(self, image):
-        r = requests.post(f'{self.url}/image', data={"mac": self.mac}, files={"image": image})
+
+    def send_request(self, error_message, url, data, files = {}):
+        r = requests.post(f'{self.url}{url}', data=data, files=files)
         if (r.status_code != 200):
             _LOGGER.error(r.content)
-            _LOGGER.error('Failed to send image')
+            _LOGGER.error(error_message)
             return False
         return True
+
+    def send_image(self, image):
+        return self.send_request('Failed to send image', '/image', data={"mac": self.mac}, files={"image": image})
 
     def send_text(self, text):
-        r = requests.post(f'{self.url}/text', data={"text": text, "mac": self.mac})
-        if (r.status_code != 200):
-            _LOGGER.error(r.content)
-            _LOGGER.error('Failed to send text')
-            return False
-        return True
+        return self.send_request('Failed to send text', '/text', data={"text": text, "mac": self.mac})
+
+    def set_brightness(self, brightness):
+        return self.send_request('Failed to set brightness', '/brightness', data={"brightness": brightness, "mac": self.mac})
 
     def isConnected(self):
-        r = requests.post(f'{self.url}/connect', data={"mac": self.mac})
-        if (r.status_code != 200):
-            _LOGGER.error(r.content)
-            _LOGGER.error('Failed to connect to the timebox')
-            return False
-        return True
+        return self.send_request('Failed to connect to the timebox', '/connect', data={"mac": self.mac})
+    
+    def set_time_channel(self):
+        return self.send_request('Failed to switch to time channel', '/time', data={"mac": self.mac})

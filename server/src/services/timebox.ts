@@ -1,13 +1,13 @@
 import { BluetoothSerialPort } from 'bluetooth-serial-port';
 
-const bt = new BluetoothSerialPort();
-
 // TODO handle multiple connection
 export class Timebox {
     mac: string
     incomingData: Buffer[]
+    bt: BluetoothSerialPort
 
     constructor(mac: string) {
+        this.bt = new BluetoothSerialPort();
         this.mac = mac;
         this.incomingData = [];
     }
@@ -15,15 +15,17 @@ export class Timebox {
     connect = async (): Promise<void> => {
         let first = true;
         return new Promise((res, rej) => {
-            bt.findSerialPortChannel(this.mac, (port) => {
-                bt.connect(this.mac, port, () => {
-                    bt.on('data', (buffer: Buffer) => {
+            this.bt.findSerialPortChannel(this.mac, (port) => {
+                this.bt.connect(this.mac, port, () => {
+                    this.bt.on('data', (buffer: Buffer) => {
                         if (first) {
                             first = false;
                             res();
                         }
                     });
-                    bt.on('data', this.onData);
+                    this.bt.on('data', this.onData);
+                    this.bt.on('closed', this.disconnect);
+                    this.bt.on('failure', this.disconnect);
                 }, rej);
             }, () => rej(`can not connect to ${this.mac}`));
         })
@@ -31,14 +33,14 @@ export class Timebox {
 
     sendMultiple = async (buffers: Buffer[]): Promise<void> => {
         for (let buffer of buffers) {
-            console.log(`-> ${buffer}`);
+            console.log(`-> sending data`);
             await this.send(buffer);
         }
     }
 
     send = async (buffer: Buffer): Promise<void> => {
         return new Promise((res, rej) => {
-            bt.write(buffer, (err) => {
+            this.bt.write(buffer, (err) => {
                 if (err) {
                     console.error('error while sending bytes', err)
                     rej(err);
@@ -50,12 +52,15 @@ export class Timebox {
     };
 
     onData = (buffer: Buffer) => {
-        console.log(`<- ${buffer}`);
+        console.log(`<- receiving data`);
         this.incomingData.push(buffer);
     }
 
     disconnect = async () => {
-        // TODO
+        if (this.bt.isOpen()) {
+            this.bt.close();
+        }
+        timeboxStore[this.mac] = undefined;
     }
 }
 

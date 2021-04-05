@@ -10,6 +10,7 @@ export const isLogged = (req: Request, res: Response, next: NextFunction) => {
 
 export function validateMiddleware(type: any, where: 'body' | 'query' | 'params' = 'body') {
     return async (req: Request, res: Response, next: NextFunction) => {
+        console.log(req[where])
         const parsedBody = plainToClass(type, req[where]);
         const errors = await classValidator.validate(parsedBody);
         if (errors.length !== 0) {
