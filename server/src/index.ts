@@ -18,7 +18,8 @@ const start = async () => {
     routes(app);
     app.get('/hello', (_, res) => res.status(200).send('Hello World !'));
 
-    app.listen(process.env.PORT, () => console.log(`Server listening on port ${process.env.PORT || 5555}...`));
+    const port = process.env.PORT || 5555;
+    app.listen(port, () => console.log(`Server listening on port ${port}...`));
 };
 
 start().catch(console.error);
