@@ -141,7 +141,68 @@ Change the brightness on a scale of 0 to 100
 }
 ```
 
+# Examples
+
+Here are some examples from my configuration
+### Update timebox with album cover when song change
+```yml
+- alias: Update timebox with album cover when song change
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: media_player.spotify_noe_rivals
+    attribute: entity_picture
+  condition: []
+  action:
+  - service: notify.timebox
+    data_template:
+      message: ''
+      data:
+        mode: image
+        link: 'http://localhost:8123{{ trigger.to_state.attributes.entity_picture }}'
+  mode: single
+```
+
+### Change the brightness when watching the TV
+
+```yml
+- alias: Switch light off when casting something
+  description: ''
+  trigger:
+    - platform: state
+      entity_id: media_player.bedroom
+      to: "playing"
+  condition: []
+  action:
+  - service: notify.timebox
+    data:
+      message: ''
+      data:
+        mode: brightness
+        brightness: 20
+
+- alias: Switch light on when stoped casting
+  description: ''
+  trigger:
+    - platform: state
+      entity_id: media_player.bedroom
+      from: "playing"
+      to:
+        - "paused"
+        - "off"
+      for: "00:00:10"
+  condition: []
+  action:
+  - service: notify.timebox
+    data:
+      message: ''
+      data:
+        mode: brightness
+        brightness: 100
+```
+
 # Credit
 
-Bring thanks to [node-divoom-timebox-evo](https://github.com/RomRider/node-divoom-timebox-evo) library
-Custom component inspired from [homeassistant-timebox](https://bitbucket.org/pjhardy/homeassistant-timebox/src/master/)
+Bring thanks to [node-divoom-timebox-evo](https://github.com/RomRider/node-divoom-timebox-evo) library.
+
+Custom component inspired from [homeassistant-timebox](https://bitbucket.org/pjhardy/homeassistant-timebox/src/master/).
