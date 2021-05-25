@@ -16,6 +16,11 @@ These steps may vary depending of your blutooth setup:
 
 It should output a list of blutooth devices. Write down the mac address of your Timebox-Evo
 
+You can try to connect to it to ensure it will work
+- run `connect MAC_ADDRESS`
+> If you have the error `Failed to connect: org.bluez.Error.Failed` run `trust MAC_ADDRESS` and try again
+- if it worked, disconnect the device, run `disconnect`
+
 If you have any problem [this guide](https://www.pcsuggest.com/linux-bluetooth-setup-hcitool-bluez/) may help you troubleshoot your issues.
 
 ## Server
