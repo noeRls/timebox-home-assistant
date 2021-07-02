@@ -136,6 +136,18 @@ This will use the image `image_dir/FILENAME`
 ```
 Change the brightness on a scale of 0 to 100
 
+## Display text
+
+```
+{
+  "message": "",
+  "data": {
+    "mode": "text",
+    "text": "Hello, World!"
+  }
+}
+```
+
 ## Switch to time channel
 ```
 {
