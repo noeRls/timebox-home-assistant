@@ -12,7 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 
 CONF_MAC = "mac"
 CONF_IMAGE_DIR = "image_dir"
-TIMEOUT = 5
+TIMEOUT = 15
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_URL): cv.string,
