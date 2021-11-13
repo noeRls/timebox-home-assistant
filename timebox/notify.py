@@ -87,11 +87,11 @@ class TimeboxService(BaseNotificationService):
                 _LOGGER.error(f'Invalid payload, {PARAM_LINK} or {PARAM_FILE_NAME} must be provided with {MODE_IMAGE} mode')
                 return False
         elif (mode == MODE_TEXT):
-            text = data.get(PARAM_TEXT)
+            text = data.get(PARAM_TEXT, message)
             if (text):
                 return self.timebox.send_text(text)
             else:
-                _LOGGER.error(f"Invalid payload, {PARAM_TEXT} must be provided with {MODE_TEXT}")
+                _LOGGER.error(f"Invalid payload, {PARAM_TEXT} or message must be provided with {MODE_TEXT}")
                 return False
         elif (mode == MODE_BRIGHTNESS):
             try:
