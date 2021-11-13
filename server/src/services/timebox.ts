@@ -13,19 +13,14 @@ export class Timebox {
     }
 
     connect = async (): Promise<void> => {
-        let first = true;
         return new Promise((res, rej) => {
             this.bt.findSerialPortChannel(this.mac, (port) => {
                 this.bt.connect(this.mac, port, () => {
-                    this.bt.on('data', (buffer: Buffer) => {
-                        if (first) {
-                            first = false;
-                            res();
-                        }
-                    });
                     this.bt.on('data', this.onData);
                     this.bt.on('closed', this.disconnect);
                     this.bt.on('failure', this.disconnect);
+
+                    res();
                 }, rej);
             }, () => rej(`can not connect to ${this.mac}`));
         })
