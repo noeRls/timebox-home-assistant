@@ -73,11 +73,16 @@ class TimeboxService(BaseNotificationService):
             return False
 
     def send_message(self, message="", **kwargs):
-        if kwargs.get(ATTR_DATA) is None:
+        if kwargs.get(ATTR_DATA) is not None:
+            data = kwargs.get(ATTR_DATA)
+            mode = data.get(PARAM_MODE, MODE_TEXT)
+        elif message is not None:
+            data = {}
+            mode = MODE_TEXT
+        else:
             _LOGGER.error("Service call needs a message type")
             return False
-        data = kwargs.get(ATTR_DATA)
-        mode = data.get(PARAM_MODE, MODE_TEXT)
+
         if (mode == MODE_IMAGE):
             if (data.get(PARAM_LINK)):
                 return self.send_image_link(data.get(PARAM_LINK))
