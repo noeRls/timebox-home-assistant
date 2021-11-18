@@ -93,9 +93,10 @@ Here come the fun part, here is the list of possibility:
 - displaying image from url
 - displaying image from a local image
 - changing the brightness
+- displaying scrolling text
 - switching to time channel
 
-This custom component acts as a notify platform. This means that the Service Data requires a message parameter, even though we're not using it. Leave the message parameter blank, and specify TimeBox mode and other information in the data parameter of the Service Data payload.
+This custom component acts as a notify platform. This means that the Service Data requires a message parameter, even though we're not using it in all cases. Leave the message parameter blank, and specify TimeBox mode and other information in the data parameter of the Service Data payload.
 
 ## Display an image
 
@@ -145,6 +146,14 @@ Change the brightness on a scale of 0 to 100
     "mode": "text",
     "text": "Hello, World!"
   }
+}
+```
+
+## Display text (message parameter only)
+If you only specify the message parameter, but leave the Service Data empty, it will automatically choose the text mode and display the message.
+```
+{
+  "message": "Hello again, World!"
 }
 ```
 
