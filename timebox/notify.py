@@ -4,8 +4,10 @@ from homeassistant.const import CONF_NAME, CONF_URL
 import voluptuous as vol
 import logging
 from homeassistant.components.notify import ATTR_TARGET, ATTR_DATA,PLATFORM_SCHEMA, BaseNotificationService
+import re
 import requests
 import io
+from datetime import datetime, timedelta, timezone
 from os.path import join
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,6 +35,9 @@ MODE_BRIGHTNESS = "brightness"
 PARAM_BRIGHTNESS = "brightness"
 
 MODE_TIME = "time"
+PARAM_SET_DATETIME = "set-datetime"
+PARAM_OFFSET_DATETIME = "offset-datetime"
+PARAM_DISPLAY_TYPE = "display-type"
 
 def is_valid_server_url(url):
     r = requests.get(f'{url}/hello', timeout=TIMEOUT)
@@ -106,7 +111,13 @@ class TimeboxService(BaseNotificationService):
                 _LOGGER.error(f"Invalid payload, {PARAM_BRIGHTNESS}={data.get(PARAM_BRIGHTNESS)}")
                 return False
         elif (mode == MODE_TIME):
-            return self.timebox.set_time_channel()
+            set_datetime = data.get(PARAM_SET_DATETIME)
+            if set_datetime:
+                offset = data.get(PARAM_OFFSET_DATETIME)
+                self.timebox.set_datetime(offset)
+
+            display_type = data.get(PARAM_DISPLAY_TYPE, "fullscreen")
+            return self.timebox.set_time_channel(display_type)
         else:
             _LOGGER.error(f"Invalid mode {mode}")
             return False
@@ -136,6 +147,26 @@ class Timebox():
 
     def isConnected(self):
         return self.send_request('Failed to connect to the timebox', '/connect', data={"mac": self.mac})
-    
-    def set_time_channel(self):
-        return self.send_request('Failed to switch to time channel', '/time', data={"mac": self.mac})
+
+    def set_time_channel(self, display_type):
+        return self.send_request('Failed to switch to time channel', '/time', data={"mac": self.mac, "display_type": display_type})
+
+    def set_datetime(self, offset):
+        if offset:
+            # parse offset, see https://stackoverflow.com/a/37097784
+            sign, hours, minutes = re.match('([+\-]?)(\d{2}):(\d{2})', offset).groups()
+            sign = -1 if sign == '-' else 1
+            hours, minutes = int(hours), int(minutes)
+
+            tzinfo = timezone(sign * timedelta(hours=hours, minutes=minutes))
+        else:
+            tzinfo = None
+
+        current_date = datetime.now(tzinfo)
+
+        # convert to unaware datetime, as timebox doesn't support timezone offsets.
+        current_date = current_date.replace(tzinfo=None)
+
+        dt = current_date = current_date.isoformat(timespec="seconds")
+
+        return self.send_request('Failed to switch to set datetime', '/datetime', data={"mac": self.mac, "datetime": dt})
