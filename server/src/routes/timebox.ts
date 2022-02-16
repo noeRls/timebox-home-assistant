@@ -3,7 +3,7 @@ import { isLogged, validateMiddleware, withTimebox } from '../middleware';
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, OK } from 'http-status';
 import { IsBoolean, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import * as multer from 'multer';
-import { BrightnessCommand, DisplayAnimation, DisplayText, TimeboxEvo, TimeChannel } from 'node-divoom-timebox-evo';
+import { BrightnessCommand, DisplayAnimation, DisplayText, TimeboxEvo, TimeChannel, DateTimeCommand } from 'node-divoom-timebox-evo';
 
 const upload = multer({ dest: './images' });
 
@@ -71,6 +71,19 @@ router.post('/time', isLogged, withTimebox(), async (req, res) => {
     }
 });
 
+router.post('/datetime', isLogged, withTimebox(), async (req, res) => {
+	const current_date = req.body.datetime ? new Date(req.body.datetime) : new Date();
+
+    try {
+        const r = (new TimeboxEvo()).createRequest('datetime') as DateTimeCommand;
+        r.date = current_date;
+        await req.timebox.sendMultiple(r.messages.asBinaryBuffer());
+        return res.status(OK).end();
+    } catch (e) {
+        console.error(e);
+        return res.status(INTERNAL_SERVER_ERROR).send(e);
+    }
+});
 
 router.post('/brightness', isLogged, withTimebox(), async (req, res) => {
     const brightness = Number(req.body.brightness);
