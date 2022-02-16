@@ -162,7 +162,7 @@ If you only specify the message parameter, but leave the Service Data empty, it 
 {
   "message": "",
   "data": {
-    "mode": "time",
+    "mode": "time"
   }
 }
 ```
