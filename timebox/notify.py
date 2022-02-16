@@ -37,6 +37,7 @@ PARAM_BRIGHTNESS = "brightness"
 MODE_TIME = "time"
 PARAM_SET_DATETIME = "set_datetime"
 PARAM_OFFSET_DATETIME = "offset_datetime"
+PARAM_DISPLAY_TYPE = "display_type"
 
 def is_valid_server_url(url):
     r = requests.get(f'{url}/hello', timeout=TIMEOUT)
@@ -115,7 +116,8 @@ class TimeboxService(BaseNotificationService):
                 offset = data.get(PARAM_OFFSET_DATETIME)
                 self.timebox.set_datetime(offset)
 
-            return self.timebox.set_time_channel()
+            display_type = data.get(PARAM_DISPLAY_TYPE, "fullscreen")
+            return self.timebox.set_time_channel(display_type)
         else:
             _LOGGER.error(f"Invalid mode {mode}")
             return False
@@ -146,8 +148,8 @@ class Timebox():
     def isConnected(self):
         return self.send_request('Failed to connect to the timebox', '/connect', data={"mac": self.mac})
 
-    def set_time_channel(self):
-        return self.send_request('Failed to switch to time channel', '/time', data={"mac": self.mac})
+    def set_time_channel(self, display_type):
+        return self.send_request('Failed to switch to time channel', '/time', data={"mac": self.mac, "display_type": display_type})
 
     def set_datetime(self, offset):
         if offset:
