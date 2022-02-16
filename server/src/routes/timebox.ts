@@ -94,11 +94,15 @@ router.post('/time', isLogged, withTimebox(), async (req, res) => {
 });
 
 router.post('/datetime', isLogged, withTimebox(), async (req, res) => {
-	const current_date = req.body.datetime ? new Date(req.body.datetime) : new Date();
+	const currentDate = req.body.datetime ? new Date(req.body.datetime) : new Date();
+
+    if (isNaN(currentDate.getTime())) {
+        return res.status(BAD_REQUEST).send('Invalid date');
+    }
 
     try {
         const r = (new TimeboxEvo()).createRequest('datetime') as DateTimeCommand;
-        r.date = current_date;
+        r.date = currentDate;
         await req.timebox.sendMultiple(r.messages.asBinaryBuffer());
         return res.status(OK).end();
     } catch (e) {

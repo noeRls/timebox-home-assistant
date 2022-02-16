@@ -163,34 +163,26 @@ If you only specify the message parameter, but leave the Service Data empty, it 
   "message": "",
   "data": {
     "mode": "time"
-  }
-}
-```
-
-## Switch to time channel, specifying display type
-```
-{
-  "message": "",
-  "data": {
-    "mode": "time",
-    "display_type": "rainbow"
+    "display-type": "rainbow"
   }
 }
 ```
 Valid display types are: `fullscreen` (default), `rainbow`, `with-box`, `analog-square`, `analog-round`, `fullscreen-negative`
 
-## Switch to time channel, updating time on timebox to current time specified utc offset
+If `display-type` is ommited `fullscreen` will be used
+
+## Updating time on timebox to current time specified utc offset
 ```
 {
   "message": "",
   "data": {
     "mode": "time",
-    "set_datetime": true
-    "datetime_offset": "-03:30"
+    "set-datetime": true
+    "datetime-offset": "-03:30"
   }
 }
 ```
-If `datetime_offset` is not specified, the local time of your system running home-assistant is used.
+If `datetime-offset` is not specified, the local time of your system running home-assistant is used.
 
 # Examples
 

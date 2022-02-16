@@ -35,9 +35,9 @@ MODE_BRIGHTNESS = "brightness"
 PARAM_BRIGHTNESS = "brightness"
 
 MODE_TIME = "time"
-PARAM_SET_DATETIME = "set_datetime"
-PARAM_OFFSET_DATETIME = "offset_datetime"
-PARAM_DISPLAY_TYPE = "display_type"
+PARAM_SET_DATETIME = "set-datetime"
+PARAM_OFFSET_DATETIME = "offset-datetime"
+PARAM_DISPLAY_TYPE = "display-type"
 
 def is_valid_server_url(url):
     r = requests.get(f'{url}/hello', timeout=TIMEOUT)
