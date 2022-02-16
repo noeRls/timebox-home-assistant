@@ -158,7 +158,7 @@ class Timebox():
 
             tzinfo = timezone(sign * timedelta(hours=hours, minutes=minutes))
         else:
-            tzinfo = timezone.utc
+            tzinfo = None
 
         current_date = datetime.now(tzinfo)
 
