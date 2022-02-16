@@ -167,6 +167,18 @@ If you only specify the message parameter, but leave the Service Data empty, it 
 }
 ```
 
+## Switch to time channel, specifying display type
+```
+{
+  "message": "",
+  "data": {
+    "mode": "time",
+    "display_type": "rainbow"
+  }
+}
+```
+Valid display types are: `fullscreen` (default), `rainbow`, `with-box`, `analog-square`, `analog-round`, `fullscreen-negative`
+
 # Examples
 
 Here are some examples from my configuration
